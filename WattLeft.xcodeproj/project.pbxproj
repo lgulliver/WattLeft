@@ -1,0 +1,415 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1C1451E59D5B3CA7EFE8C2B0 /* WattLeftApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 724E4965BB736E091B63BD71 /* WattLeftApp.swift */; };
+		1CFF074CE74C74714359DAC9 /* BatteryReaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787132E098641968B17E1AFC /* BatteryReaderTests.swift */; };
+		2A6DA61B51DB29964166305E /* MenuBarDisplayMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA130F7C29BC84B7A879BBB /* MenuBarDisplayMode.swift */; };
+		53FC22264F4EBE6B87364239 /* BatteryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56FEF76F6414A461347A350A /* BatteryModel.swift */; };
+		5DE43DA3E7379D573BB65001 /* BatteryReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41973E3FF6F20931561AC23D /* BatteryReader.swift */; };
+		B335289DD05ED6866FD0E92E /* BatteryInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E132FDE662D3068379C5BB74 /* BatteryInfo.swift */; };
+		D7BA8BEBD0C570CC9AD4DDEA /* BatteryFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3707C5BB8CA8503AB1D3BC3 /* BatteryFormatter.swift */; };
+		E85D807C7E86667F8F0E15DB /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC43EB4DDFB8837B6FAE27A /* MenuBarView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5AD58764D1A1BA58CBCEB184 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 85151E0DEA7FCC2EF1A2C1DE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ED10483039907BDF98A4C935;
+			remoteInfo = WattLeft;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1BA130F7C29BC84B7A879BBB /* MenuBarDisplayMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarDisplayMode.swift; sourceTree = "<group>"; };
+		1DED7A39B868C9B8ED56BF72 /* WattLeftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WattLeftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FC43EB4DDFB8837B6FAE27A /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		41973E3FF6F20931561AC23D /* BatteryReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryReader.swift; sourceTree = "<group>"; };
+		56FEF76F6414A461347A350A /* BatteryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryModel.swift; sourceTree = "<group>"; };
+		724E4965BB736E091B63BD71 /* WattLeftApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WattLeftApp.swift; sourceTree = "<group>"; };
+		787132E098641968B17E1AFC /* BatteryReaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryReaderTests.swift; sourceTree = "<group>"; };
+		A9DD6FD555536F2F452AEFA1 /* WattLeft.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WattLeft.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3707C5BB8CA8503AB1D3BC3 /* BatteryFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryFormatter.swift; sourceTree = "<group>"; };
+		E132FDE662D3068379C5BB74 /* BatteryInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryInfo.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0F1CC126DDD3477DE1AC97A3 = {
+			isa = PBXGroup;
+			children = (
+				38A362FC0C4F3EDCC5AD5853 /* App */,
+				380AE4841F6149DC457439B9 /* Tests */,
+				A2A7E1E38D88E0DD5E41D711 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		380AE4841F6149DC457439B9 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				787132E098641968B17E1AFC /* BatteryReaderTests.swift */,
+			);
+			name = Tests;
+			path = WattLeft/Tests;
+			sourceTree = "<group>";
+		};
+		38A362FC0C4F3EDCC5AD5853 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				B3707C5BB8CA8503AB1D3BC3 /* BatteryFormatter.swift */,
+				E132FDE662D3068379C5BB74 /* BatteryInfo.swift */,
+				56FEF76F6414A461347A350A /* BatteryModel.swift */,
+				41973E3FF6F20931561AC23D /* BatteryReader.swift */,
+				1BA130F7C29BC84B7A879BBB /* MenuBarDisplayMode.swift */,
+				1FC43EB4DDFB8837B6FAE27A /* MenuBarView.swift */,
+				724E4965BB736E091B63BD71 /* WattLeftApp.swift */,
+			);
+			name = App;
+			path = WattLeft/App;
+			sourceTree = "<group>";
+		};
+		A2A7E1E38D88E0DD5E41D711 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A9DD6FD555536F2F452AEFA1 /* WattLeft.app */,
+				1DED7A39B868C9B8ED56BF72 /* WattLeftTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D98B9714AB4F777B8C2F0E65 /* WattLeftTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4F668984F03CDD28F026A487 /* Build configuration list for PBXNativeTarget "WattLeftTests" */;
+			buildPhases = (
+				C4E15B23824A726A8A0C19D4 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7B86CB6458618CD48668FA46 /* PBXTargetDependency */,
+			);
+			name = WattLeftTests;
+			packageProductDependencies = (
+			);
+			productName = WattLeftTests;
+			productReference = 1DED7A39B868C9B8ED56BF72 /* WattLeftTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		ED10483039907BDF98A4C935 /* WattLeft */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 56FD7DD70A228705C80D69B8 /* Build configuration list for PBXNativeTarget "WattLeft" */;
+			buildPhases = (
+				FA34D956DF04428B08239C89 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WattLeft;
+			packageProductDependencies = (
+			);
+			productName = WattLeft;
+			productReference = A9DD6FD555536F2F452AEFA1 /* WattLeft.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		85151E0DEA7FCC2EF1A2C1DE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+			};
+			buildConfigurationList = 23CD46BC6E3C9827B0ADEC8A /* Build configuration list for PBXProject "WattLeft" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 0F1CC126DDD3477DE1AC97A3;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				ED10483039907BDF98A4C935 /* WattLeft */,
+				D98B9714AB4F777B8C2F0E65 /* WattLeftTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C4E15B23824A726A8A0C19D4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CFF074CE74C74714359DAC9 /* BatteryReaderTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FA34D956DF04428B08239C89 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D7BA8BEBD0C570CC9AD4DDEA /* BatteryFormatter.swift in Sources */,
+				B335289DD05ED6866FD0E92E /* BatteryInfo.swift in Sources */,
+				53FC22264F4EBE6B87364239 /* BatteryModel.swift in Sources */,
+				5DE43DA3E7379D573BB65001 /* BatteryReader.swift in Sources */,
+				2A6DA61B51DB29964166305E /* MenuBarDisplayMode.swift in Sources */,
+				E85D807C7E86667F8F0E15DB /* MenuBarView.swift in Sources */,
+				1C1451E59D5B3CA7EFE8C2B0 /* WattLeftApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7B86CB6458618CD48668FA46 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ED10483039907BDF98A4C935 /* WattLeft */;
+			targetProxy = 5AD58764D1A1BA58CBCEB184 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		311E6C9A649DB33C824D7BED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WattLeft.app/Contents/MacOS/WattLeft";
+			};
+			name = Release;
+		};
+		74452C782D2F248A333FD0F0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = WattLeft;
+				INFOPLIST_KEY_CFBundleName = WattLeft;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		A71AD2F4BB281C4FFE473094 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHighResolutionCapable = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wattleft.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		B47B5EF241EE50E24766BB6F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WattLeft.app/Contents/MacOS/WattLeft";
+			};
+			name = Debug;
+		};
+		BBEFABD8C88F4EA8DDBD83A6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = WattLeft;
+				INFOPLIST_KEY_CFBundleName = WattLeft;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		C0D0061D41E49725C3ED7AEC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHighResolutionCapable = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wattleft.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		23CD46BC6E3C9827B0ADEC8A /* Build configuration list for PBXProject "WattLeft" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A71AD2F4BB281C4FFE473094 /* Debug */,
+				C0D0061D41E49725C3ED7AEC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4F668984F03CDD28F026A487 /* Build configuration list for PBXNativeTarget "WattLeftTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B47B5EF241EE50E24766BB6F /* Debug */,
+				311E6C9A649DB33C824D7BED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		56FD7DD70A228705C80D69B8 /* Build configuration list for PBXNativeTarget "WattLeft" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				74452C782D2F248A333FD0F0 /* Debug */,
+				BBEFABD8C88F4EA8DDBD83A6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 85151E0DEA7FCC2EF1A2C1DE /* Project object */;
+}

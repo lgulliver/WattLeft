@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+      - bugfix/**
+      - hotfix/**
+      - chore/**
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen
+
+      - name: Build
+        run: xcodebuild -project WattLeft.xcodeproj -scheme WattLeft -configuration Release -destination "platform=macOS" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
+
+      - name: Test
+        run: xcodebuild -project WattLeft.xcodeproj -scheme WattLeft -destination "platform=macOS" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO test
