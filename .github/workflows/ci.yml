@@ -16,7 +16,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install XcodeGen
         run: brew install xcodegen
@@ -38,7 +38,7 @@ jobs:
           hdiutil create -volname "WattLeft" -srcfolder "$DMG_DIR" -ov -format UDZO "WattLeft.dmg"
 
       - name: Upload DMG artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: WattLeft-dmg
           path: WattLeft.dmg
