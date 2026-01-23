@@ -2,6 +2,8 @@
 
 WattLeft is a macOS menu bar app that shows battery percentage, time remaining, battery health, cycle count, power mode, and time since unplugged.
 
+Copyright (c) 2026 WattLeft contributors.
+
 ## Features
 
 - Menu bar display: percentage or time remaining
@@ -40,3 +42,7 @@ xcodebuild test -project WattLeft.xcodeproj -scheme WattLeft -destination "platf
 ## Notes
 
 The "On battery for" timer starts counting when WattLeft observes the AC → battery transition.
+
+## License
+
+GPL-3.0. See `LICENSE`.

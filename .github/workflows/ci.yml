@@ -29,3 +29,22 @@ jobs:
 
       - name: Test
         run: xcodebuild -project WattLeft.xcodeproj -scheme WattLeft -destination "platform=macOS" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO test
+
+      - name: Package DMG
+        run: |
+          APP_PATH=$(xcodebuild -showBuildSettings -project WattLeft.xcodeproj -scheme WattLeft -configuration Release | awk -F' = ' '/TARGET_BUILD_DIR/ {dir=$2} /WRAPPER_NAME/ {name=$2} END {print dir "/" name}')
+          DMG_DIR=$(mktemp -d)
+          cp -R "$APP_PATH" "$DMG_DIR/WattLeft.app"
+          hdiutil create -volname "WattLeft" -srcfolder "$DMG_DIR" -ov -format UDZO "WattLeft.dmg"
+
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WattLeft-dmg
+          path: WattLeft.dmg
+
+      - name: Publish DMG (tagged releases)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: WattLeft.dmg
