@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen
+
+      - name: Build
+        run: xcodebuild -project WattLeft.xcodeproj -scheme WattLeft -configuration Release -destination "platform=macOS" CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
+
+      - name: Package DMG
+        run: |
+          APP_PATH=$(xcodebuild -showBuildSettings -project WattLeft.xcodeproj -scheme WattLeft -configuration Release | awk -F' = ' '/TARGET_BUILD_DIR/ {dir=$2} /WRAPPER_NAME/ {name=$2} END {print dir "/" name}')
+          DMG_DIR=$(mktemp -d)
+          cp -R "$APP_PATH" "$DMG_DIR/WattLeft.app"
+          hdiutil create -volname "WattLeft" -srcfolder "$DMG_DIR" -ov -format UDZO "WattLeft.dmg"
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: WattLeft.dmg
