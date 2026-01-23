@@ -13,7 +13,7 @@ Copyright (c) 2026 WattLeft contributors.
 
 ## Requirements
 
-- macOS 26.0 or later
+- macOS 15.0 or later
 - Xcode (current stable)
 
 ## Build

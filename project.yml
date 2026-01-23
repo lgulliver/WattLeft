@@ -1,7 +1,7 @@
 name: WattLeft
 options:
   deploymentTarget:
-    macOS: "26.0"
+    macOS: "15.0"
 settings:
   base:
     PRODUCT_BUNDLE_IDENTIFIER: com.wattleft.app
