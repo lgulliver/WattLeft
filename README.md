@@ -1,6 +1,6 @@
 # WattLeft
 
-![WattLeft Icon](assets/icon.png)
+![WattLeft Icon](assets/Icon-iOS-Default-1024x1024@1x.png)
 
 [![Swift Build](https://github.com/lgulliver/WattLeft/actions/workflows/swift.yml/badge.svg)](https://github.com/lgulliver/WattLeft/actions/workflows/swift.yml)
 

@@ -29,10 +29,75 @@ jobs:
         run: |
           APP_PATH=$(xcodebuild -showBuildSettings -project WattLeft.xcodeproj -scheme WattLeft -configuration Release | awk -F' = ' '/TARGET_BUILD_DIR/ {dir=$2} /WRAPPER_NAME/ {name=$2} END {print dir "/" name}')
           DMG_DIR=$(mktemp -d)
+          DMG_RW_PATH="$RUNNER_TEMP/WattLeft-rw.dmg"
+          DMG_FINAL_PATH="WattLeft.dmg"
+          MOUNT_DIR="$RUNNER_TEMP/WattLeft-mount"
+          BG_DIR="$DMG_DIR/.background"
+          ICON_SRC="assets/Icon-iOS-Default-1024x1024@1x.png"
+
+          mkdir -p "$BG_DIR"
           cp -R "$APP_PATH" "$DMG_DIR/WattLeft.app"
-          hdiutil create -volname "WattLeft" -srcfolder "$DMG_DIR" -ov -format UDZO "WattLeft.dmg"
+          ln -s /Applications "$DMG_DIR/Applications"
+
+          sips -z 280 280 "$ICON_SRC" --out "$BG_DIR/dmg-background.png"
+          sips --padToHeightWidth 400 640 "$BG_DIR/dmg-background.png"
+
+          ICONSET_DIR="$RUNNER_TEMP/WattLeftIcon.iconset"
+          mkdir -p "$ICONSET_DIR"
+          sips -z 16 16 "$ICON_SRC" --out "$ICONSET_DIR/icon_16x16.png"
+          sips -z 32 32 "$ICON_SRC" --out "$ICONSET_DIR/icon_16x16@2x.png"
+          sips -z 32 32 "$ICON_SRC" --out "$ICONSET_DIR/icon_32x32.png"
+          sips -z 64 64 "$ICON_SRC" --out "$ICONSET_DIR/icon_32x32@2x.png"
+          sips -z 128 128 "$ICON_SRC" --out "$ICONSET_DIR/icon_128x128.png"
+          sips -z 256 256 "$ICON_SRC" --out "$ICONSET_DIR/icon_128x128@2x.png"
+          sips -z 256 256 "$ICON_SRC" --out "$ICONSET_DIR/icon_256x256.png"
+          sips -z 512 512 "$ICON_SRC" --out "$ICONSET_DIR/icon_256x256@2x.png"
+          sips -z 512 512 "$ICON_SRC" --out "$ICONSET_DIR/icon_512x512.png"
+          cp "$ICON_SRC" "$ICONSET_DIR/icon_512x512@2x.png"
+          iconutil -c icns "$ICONSET_DIR" -o "$DMG_DIR/.VolumeIcon.icns"
+
+          hdiutil create -volname "WattLeft" -srcfolder "$DMG_DIR" -ov -format UDRW "$DMG_RW_PATH"
+          hdiutil attach "$DMG_RW_PATH" -nobrowse -mountpoint "$MOUNT_DIR"
+
+          xcrun SetFile -a C "$MOUNT_DIR"
+          xcrun SetFile -a V "$MOUNT_DIR/.VolumeIcon.icns"
+
+          osascript <<EOF
+          tell application "Finder"
+            tell disk "WattLeft"
+              open
+              set current view of container window to icon view
+              set toolbar visible of container window to false
+              set statusbar visible of container window to false
+              set the bounds of container window to {100, 100, 740, 500}
+              set viewOptions to the icon view options of container window
+              set arrangement of viewOptions to not arranged
+              set icon size of viewOptions to 128
+              set background picture of viewOptions to file ".background:dmg-background.png"
+              set position of item "WattLeft.app" to {180, 260}
+              set position of item "Applications" to {460, 260}
+              close
+            end tell
+          end tell
+          EOF
+
+          hdiutil detach "$MOUNT_DIR"
+          hdiutil convert "$DMG_RW_PATH" -format UDZO -o "$DMG_FINAL_PATH"
+
+      - name: Package ZIP
+        run: |
+          APP_PATH=$(xcodebuild -showBuildSettings -project WattLeft.xcodeproj -scheme WattLeft -configuration Release | awk -F' = ' '/TARGET_BUILD_DIR/ {dir=$2} /WRAPPER_NAME/ {name=$2} END {print dir "/" name}')
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" "WattLeft.zip"
 
       - name: Publish Release
         uses: softprops/action-gh-release@v2
         with:
-          files: WattLeft.dmg
+          files: |
+            WattLeft.dmg
+            WattLeft.zip
+          body: |
+            This app is distributed unsigned (no Apple Developer ID).
+
+            If macOS blocks the app:
+            1) Right-click WattLeft.app and choose Open.
+            2) Click Open in the prompt.

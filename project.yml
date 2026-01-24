@@ -34,6 +34,7 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: WattLeft
         INFOPLIST_KEY_CFBundleName: WattLeft
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.utilities
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: YES
 
   WattLeftTests:
