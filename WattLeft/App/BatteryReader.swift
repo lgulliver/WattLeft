@@ -20,6 +20,28 @@ final class BatteryReader {
         return nil
     }
 
+    func readEnergyImpactApps() -> [EnergyImpactApp] {
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/top")
+        task.arguments = ["-l", "1", "-o", "power", "-stats", "pid,command,power"]
+        let outputPipe = Pipe()
+        let errorPipe = Pipe()
+        task.standardOutput = outputPipe
+        task.standardError = errorPipe
+
+        do {
+            try task.run()
+        } catch {
+            return []
+        }
+        task.waitUntilExit()
+        guard task.terminationStatus == 0 else { return [] }
+
+        let data = outputPipe.fileHandleForReading.readDataToEndOfFile()
+        guard let output = String(data: data, encoding: .utf8) else { return [] }
+        return BatteryReader.energyImpactApps(fromTopOutput: output)
+    }
+
     static func batteryInfo(from description: [String: Any]) -> BatteryInfo? {
         return batteryInfo(from: description, registry: nil)
     }
@@ -41,7 +63,7 @@ final class BatteryReader {
             return nil
         }
 
-        let percentage = (currentCapacity * 100) / maxCapacity
+        let percentage = Int(round((Double(currentCapacity) / Double(maxCapacity)) * 100.0))
 
         let powerSourceState = description[kIOPSPowerSourceStateKey] as? String
         let isOnACPower = powerSourceState == kIOPSACPowerValue
@@ -158,5 +180,35 @@ final class BatteryReader {
             }
         }
         return nil
+    }
+
+    static func energyImpactApps(fromTopOutput output: String) -> [EnergyImpactApp] {
+        let lines = output.split(separator: "\n", omittingEmptySubsequences: true)
+        guard let headerIndex = lines.firstIndex(where: { $0.contains("PID") && $0.contains("COMMAND") && $0.contains("POWER") }) else {
+            return []
+        }
+
+        let dataLines = lines[(headerIndex + 1)...]
+        var apps: [EnergyImpactApp] = []
+        apps.reserveCapacity(10)
+
+        for line in dataLines {
+            let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard trimmed.isEmpty == false else { continue }
+            let parts = trimmed.split(whereSeparator: { $0 == " " || $0 == "\t" })
+            guard parts.count >= 3 else { continue }
+
+            guard let pid = Int(parts[0]) else { continue }
+            guard let impact = Double(parts.last ?? "") else { continue }
+            let nameParts = parts.dropFirst().dropLast()
+            let name = nameParts.joined(separator: " ")
+            guard name.isEmpty == false else { continue }
+            guard impact > 0 else { continue }
+
+            apps.append(EnergyImpactApp(pid: pid, name: name, impact: impact))
+        }
+
+        return apps
+            .sorted { $0.impact > $1.impact }
     }
 }

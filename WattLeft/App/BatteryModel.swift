@@ -6,6 +6,8 @@ import SwiftUI
 final class BatteryModel: ObservableObject {
     @Published private(set) var info: BatteryInfo = .empty
     @Published private(set) var launchAtLogin = false
+    @Published private(set) var energyImpactApps: [EnergyImpactApp] = []
+    @Published private(set) var batteryHistory: [BatterySample] = []
 
     private let reader = BatteryReader()
     private var timer: Timer?
@@ -14,6 +16,7 @@ final class BatteryModel: ObservableObject {
     private let lastOnACKey = "WattLeft.lastOnACPower"
     private var lastUnpluggedAt: Date?
     private var lastWasOnACPower: Bool?
+    private let maxHistorySamples = 720
 
     init() {
         launchAtLogin = isLaunchAtLoginEnabled()
@@ -35,6 +38,8 @@ final class BatteryModel: ObservableObject {
         updateUnpluggedTracking(isOnACPower: nextInfo.isOnACPower)
         nextInfo.timeOnBatteryMinutes = timeOnBatteryMinutes()
         info = nextInfo
+        energyImpactApps = reader.readEnergyImpactApps()
+        updateBatteryHistory(percentage: nextInfo.percentage, isOnACPower: nextInfo.isOnACPower)
     }
 
     private func startTimer() {
@@ -74,6 +79,27 @@ final class BatteryModel: ObservableObject {
         let interval = Date().timeIntervalSince(lastUnpluggedAt)
         guard interval >= 0 else { return nil }
         return Int(interval / 60)
+    }
+
+    private func updateBatteryHistory(percentage: Int, isOnACPower: Bool) {
+        if isOnACPower {
+            if !batteryHistory.isEmpty {
+                batteryHistory = []
+            }
+            return
+        }
+
+        let now = Date()
+        if let last = batteryHistory.last,
+           Calendar.current.isDate(last.timestamp, equalTo: now, toGranularity: .minute),
+           last.percentage == percentage {
+            return
+        }
+
+        batteryHistory.append(BatterySample(timestamp: now, percentage: percentage))
+        if batteryHistory.count > maxHistorySamples {
+            batteryHistory.removeFirst(batteryHistory.count - maxHistorySamples)
+        }
     }
 
     func setLaunchAtLogin(_ enabled: Bool) {

@@ -32,4 +32,11 @@ enum BatteryFormatter {
         guard let count else { return "—" }
         return "\(count)"
     }
+
+    static func impactString(fromValue value: Double) -> String {
+        if value >= 10 {
+            return String(format: "%.0f", value)
+        }
+        return String(format: "%.1f", value)
+    }
 }

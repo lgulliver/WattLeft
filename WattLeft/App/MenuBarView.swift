@@ -1,4 +1,5 @@
 import AppKit
+import Charts
 import SwiftUI
 
 struct MenuBarView: View {
@@ -24,6 +25,61 @@ struct MenuBarView: View {
                 tableRow("Maximum Capacity",
                          value: BatteryFormatter.healthString(fromPercentage: model.info.healthPercentage))
                 tableRow("Power Mode", value: model.info.powerMode ?? "—")
+            }
+
+            if !model.batteryHistory.isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Battery Charge (since unplugged)")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+
+                    Chart(model.batteryHistory) { sample in
+                        AreaMark(
+                            x: .value("Time", sample.timestamp),
+                            y: .value("Charge", sample.percentage)
+                        )
+                        .foregroundStyle(.blue.opacity(0.2))
+
+                        LineMark(
+                            x: .value("Time", sample.timestamp),
+                            y: .value("Charge", sample.percentage)
+                        )
+                        .foregroundStyle(.blue)
+                    }
+                    .chartYScale(domain: 0...100)
+                    .chartXAxis(.hidden)
+                    .chartYAxis {
+                        AxisMarks(position: .leading, values: [0, 50, 100]) { value in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel {
+                                if let percent = value.as(Int.self) {
+                                    Text("\(percent)%")
+                                }
+                            }
+                        }
+                    }
+                    .frame(height: 90)
+                }
+            }
+
+            if !significantEnergyApps.isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Significant Energy")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+
+                    ForEach(significantEnergyApps) { app in
+                        HStack {
+                            Text(app.name)
+                                .lineLimit(1)
+                            Spacer()
+                            Text(BatteryFormatter.impactString(fromValue: app.impact))
+                                .monospacedDigit()
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
             }
 
             Divider()
@@ -82,5 +138,10 @@ struct MenuBarView: View {
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .trailing)
         }
+    }
+
+    private var significantEnergyApps: [EnergyImpactApp] {
+        let threshold = 10.0
+        return Array(model.energyImpactApps.filter { $0.impact >= threshold }.prefix(5))
     }
 }
