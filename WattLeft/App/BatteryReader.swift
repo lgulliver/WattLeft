@@ -112,6 +112,7 @@ final class BatteryReader {
             : BatteryFormatter.conditionString(fromHealth: healthPercentage)
 
         let powerMode = BatteryReader.readPowerMode()
+        let powerConsumptionWatts = BatteryReader.powerConsumptionWatts(fromRegistry: registry)
 
         return BatteryInfo(
             percentage: percentage,
@@ -122,7 +123,8 @@ final class BatteryReader {
             condition: condition,
             powerMode: powerMode,
             isCharging: isCharging,
-            isOnACPower: isOnACPower
+            isOnACPower: isOnACPower,
+            powerConsumptionWatts: powerConsumptionWatts
         )
     }
 
@@ -180,6 +182,18 @@ final class BatteryReader {
             }
         }
         return nil
+    }
+
+    static func powerConsumptionWatts(fromRegistry registry: [String: Any]?) -> Double? {
+        guard let registry else { return nil }
+
+        let amperage = (registry["InstantAmperage"] as? Int)
+            ?? (registry["Amperage"] as? Int)
+        let voltage = registry["Voltage"] as? Int
+
+        guard let amperage, let voltage, voltage > 0 else { return nil }
+        let watts = (Double(abs(amperage)) * Double(voltage)) / 1_000_000.0
+        return watts > 0 ? watts : nil
     }
 
     static func energyImpactApps(fromTopOutput output: String) -> [EnergyImpactApp] {

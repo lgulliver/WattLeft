@@ -100,6 +100,17 @@ final class BatteryReaderTests: XCTestCase {
         XCTAssertEqual(apps[1].name, "WindowServer")
         XCTAssertEqual(apps[2].name, "Note App")
     }
+
+    func testPowerConsumptionFromRegistry() {
+        let registry: [String: Any] = [
+            "InstantAmperage": -1500,
+            "Voltage": 12000
+        ]
+
+        let watts = BatteryReader.powerConsumptionWatts(fromRegistry: registry)
+        XCTAssertNotNil(watts)
+        XCTAssertEqual(watts ?? 0, 18.0, accuracy: 0.01)
+    }
     
     // MARK: - Percentage Calculation Tests
     

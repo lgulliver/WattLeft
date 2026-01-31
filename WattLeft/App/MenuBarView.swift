@@ -27,34 +27,34 @@ struct MenuBarView: View {
                 tableRow("Power Mode", value: model.info.powerMode ?? "—")
             }
 
-            if !model.batteryHistory.isEmpty {
+            if !model.powerHistory.isEmpty {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Battery Charge (since unplugged)")
+                    Text("Power Consumption (since unplugged)")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
 
-                    Chart(model.batteryHistory) { sample in
+                    Chart(model.powerHistory) { sample in
                         AreaMark(
                             x: .value("Time", sample.timestamp),
-                            y: .value("Charge", sample.percentage)
+                            y: .value("Watts", sample.watts)
                         )
                         .foregroundStyle(.blue.opacity(0.2))
 
                         LineMark(
                             x: .value("Time", sample.timestamp),
-                            y: .value("Charge", sample.percentage)
+                            y: .value("Watts", sample.watts)
                         )
                         .foregroundStyle(.blue)
                     }
-                    .chartYScale(domain: 0...100)
+                    .chartYScale(domain: 0...powerChartMax)
                     .chartXAxis(.hidden)
                     .chartYAxis {
-                        AxisMarks(position: .leading, values: [0, 50, 100]) { value in
+                        AxisMarks(position: .leading, values: powerChartAxisValues) { value in
                             AxisGridLine()
                             AxisTick()
                             AxisValueLabel {
-                                if let percent = value.as(Int.self) {
-                                    Text("\(percent)%")
+                                if let watts = value.as(Double.self) {
+                                    Text("\(BatteryFormatter.impactString(fromValue: watts))W")
                                 }
                             }
                         }
@@ -143,5 +143,23 @@ struct MenuBarView: View {
     private var significantEnergyApps: [EnergyImpactApp] {
         let threshold = 10.0
         return Array(model.energyImpactApps.filter { $0.impact >= threshold }.prefix(5))
+    }
+
+    private var powerChartMax: Double {
+        let maxValue = model.powerHistory.map { $0.watts }.max() ?? 1
+        return max(1, maxValue * 1.2)
+    }
+
+    private var powerChartAxisValues: [Double] {
+        let maxValue = powerChartMax
+        let mid = maxValue / 2
+        let values = [0, mid, maxValue]
+        return values
+            .map { ($0 * 10).rounded() / 10 }
+            .reduce(into: [Double]()) { result, value in
+                if !result.contains(where: { abs($0 - value) < 0.01 }) {
+                    result.append(value)
+                }
+            }
     }
 }

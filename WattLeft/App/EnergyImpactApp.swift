@@ -7,8 +7,8 @@ struct EnergyImpactApp: Identifiable, Equatable {
     let impact: Double
 }
 
-struct BatterySample: Identifiable, Equatable {
+struct PowerSample: Identifiable, Equatable {
     let id = UUID()
     let timestamp: Date
-    let percentage: Int
+    let watts: Double
 }

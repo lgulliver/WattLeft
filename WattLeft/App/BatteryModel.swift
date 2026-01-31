@@ -7,7 +7,7 @@ final class BatteryModel: ObservableObject {
     @Published private(set) var info: BatteryInfo = .empty
     @Published private(set) var launchAtLogin = false
     @Published private(set) var energyImpactApps: [EnergyImpactApp] = []
-    @Published private(set) var batteryHistory: [BatterySample] = []
+    @Published private(set) var powerHistory: [PowerSample] = []
 
     private let reader = BatteryReader()
     private var timer: Timer?
@@ -39,7 +39,7 @@ final class BatteryModel: ObservableObject {
         nextInfo.timeOnBatteryMinutes = timeOnBatteryMinutes()
         info = nextInfo
         energyImpactApps = reader.readEnergyImpactApps()
-        updateBatteryHistory(percentage: nextInfo.percentage, isOnACPower: nextInfo.isOnACPower)
+        updatePowerHistory(watts: nextInfo.powerConsumptionWatts, isOnACPower: nextInfo.isOnACPower)
     }
 
     private func startTimer() {
@@ -81,24 +81,26 @@ final class BatteryModel: ObservableObject {
         return Int(interval / 60)
     }
 
-    private func updateBatteryHistory(percentage: Int, isOnACPower: Bool) {
+    private func updatePowerHistory(watts: Double?, isOnACPower: Bool) {
         if isOnACPower {
-            if !batteryHistory.isEmpty {
-                batteryHistory = []
+            if !powerHistory.isEmpty {
+                powerHistory = []
             }
             return
         }
 
+        guard let watts, watts > 0 else { return }
+
         let now = Date()
-        if let last = batteryHistory.last,
+        if let last = powerHistory.last,
            Calendar.current.isDate(last.timestamp, equalTo: now, toGranularity: .minute),
-           last.percentage == percentage {
+           abs(last.watts - watts) < 0.05 {
             return
         }
 
-        batteryHistory.append(BatterySample(timestamp: now, percentage: percentage))
-        if batteryHistory.count > maxHistorySamples {
-            batteryHistory.removeFirst(batteryHistory.count - maxHistorySamples)
+        powerHistory.append(PowerSample(timestamp: now, watts: watts))
+        if powerHistory.count > maxHistorySamples {
+            powerHistory.removeFirst(powerHistory.count - maxHistorySamples)
         }
     }
 

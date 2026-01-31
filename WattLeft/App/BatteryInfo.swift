@@ -10,6 +10,7 @@ struct BatteryInfo: Equatable {
     var powerMode: String?
     var isCharging: Bool
     var isOnACPower: Bool
+    var powerConsumptionWatts: Double?
 
     static let empty = BatteryInfo(
         percentage: 0,
@@ -20,6 +21,7 @@ struct BatteryInfo: Equatable {
         condition: nil,
         powerMode: nil,
         isCharging: false,
-        isOnACPower: false
+        isOnACPower: false,
+        powerConsumptionWatts: nil
     )
 }
