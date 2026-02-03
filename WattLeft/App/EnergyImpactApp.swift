@@ -7,6 +7,12 @@ struct EnergyImpactApp: Identifiable, Equatable {
     let impact: Double
 }
 
+struct EnergyImpactAppSummary: Identifiable, Equatable {
+    let id = UUID()
+    let name: String
+    let totalImpact: Double
+}
+
 struct PowerSample: Identifiable, Equatable {
     let id = UUID()
     let timestamp: Date

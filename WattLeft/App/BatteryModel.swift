@@ -2,12 +2,28 @@ import Foundation
 import ServiceManagement
 import SwiftUI
 
+enum EnergyImpactMetric {
+    case power
+    case cpu
+
+    var liveTitle: String {
+        switch self {
+        case .power:
+            return "Energy Impact (live)"
+        case .cpu:
+            return "Activity (CPU)"
+        }
+    }
+}
+
 @MainActor
 final class BatteryModel: ObservableObject {
     @Published private(set) var info: BatteryInfo = .empty
     @Published private(set) var launchAtLogin = false
     @Published private(set) var energyImpactApps: [EnergyImpactApp] = []
+    @Published private(set) var energyImpactTotals: [EnergyImpactAppSummary] = []
     @Published private(set) var powerHistory: [PowerSample] = []
+    @Published private(set) var energyImpactMetric: EnergyImpactMetric = .power
 
     private let reader = BatteryReader()
     private var timer: Timer?
@@ -16,6 +32,8 @@ final class BatteryModel: ObservableObject {
     private let lastOnACKey = "WattLeft.lastOnACPower"
     private var lastUnpluggedAt: Date?
     private var lastWasOnACPower: Bool?
+    private var lastImpactSampleAt: Date?
+    private var impactTotals: [String: Double] = [:]
     private let maxHistorySamples = 720
 
     init() {
@@ -38,7 +56,10 @@ final class BatteryModel: ObservableObject {
         updateUnpluggedTracking(isOnACPower: nextInfo.isOnACPower)
         nextInfo.timeOnBatteryMinutes = timeOnBatteryMinutes()
         info = nextInfo
+        let now = Date()
         energyImpactApps = reader.readEnergyImpactApps()
+        energyImpactMetric = .power
+        updateImpactTotals(apps: energyImpactApps, isOnACPower: nextInfo.isOnACPower, now: now)
         updatePowerHistory(watts: nextInfo.powerConsumptionWatts, isOnACPower: nextInfo.isOnACPower)
     }
 
@@ -102,6 +123,40 @@ final class BatteryModel: ObservableObject {
         if powerHistory.count > maxHistorySamples {
             powerHistory.removeFirst(powerHistory.count - maxHistorySamples)
         }
+    }
+
+    private func updateImpactTotals(apps: [EnergyImpactApp], isOnACPower: Bool, now: Date) {
+        if isOnACPower {
+            if !impactTotals.isEmpty || !energyImpactTotals.isEmpty {
+                impactTotals = [:]
+                energyImpactTotals = []
+            }
+            lastImpactSampleAt = nil
+            return
+        }
+
+        guard let lastImpactSampleAt else {
+            self.lastImpactSampleAt = now
+            return
+        }
+
+        let interval = now.timeIntervalSince(lastImpactSampleAt)
+        guard interval > 0 else {
+            self.lastImpactSampleAt = now
+            return
+        }
+
+        let clampedInterval = min(interval, 300)
+        let minutes = clampedInterval / 60.0
+
+        for app in apps {
+            impactTotals[app.name, default: 0] += app.impact * minutes
+        }
+
+        self.lastImpactSampleAt = now
+        energyImpactTotals = impactTotals
+            .map { EnergyImpactAppSummary(name: $0.key, totalImpact: $0.value) }
+            .sorted { $0.totalImpact > $1.totalImpact }
     }
 
     func setLaunchAtLogin(_ enabled: Bool) {

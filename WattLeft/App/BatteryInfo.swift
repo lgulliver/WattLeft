@@ -11,6 +11,7 @@ struct BatteryInfo: Equatable {
     var isCharging: Bool
     var isOnACPower: Bool
     var powerConsumptionWatts: Double?
+    var optimizedChargingState: OptimizedChargingState
 
     static let empty = BatteryInfo(
         percentage: 0,
@@ -22,6 +23,13 @@ struct BatteryInfo: Equatable {
         powerMode: nil,
         isCharging: false,
         isOnACPower: false,
-        powerConsumptionWatts: nil
+        powerConsumptionWatts: nil,
+        optimizedChargingState: .unknown
     )
+}
+
+enum OptimizedChargingState: String {
+    case engaged = "On Hold"
+    case notEngaged = "Not Engaged"
+    case unknown = "—"
 }

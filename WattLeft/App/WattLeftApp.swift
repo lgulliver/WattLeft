@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 @main
@@ -54,8 +55,20 @@ struct WattLeftApp: App {
             base = "battery.100"
         }
         if model.info.isCharging {
-            return "\(base).bolt"
+            let chargingCandidates = ["\(base).bolt", "battery.100.bolt", "bolt.fill", base]
+            return firstAvailableSymbol(from: chargingCandidates) ?? base
         }
         return base
+    }
+
+    private func firstAvailableSymbol(from candidates: [String]) -> String? {
+        for name in candidates where symbolExists(name) {
+            return name
+        }
+        return nil
+    }
+
+    private func symbolExists(_ name: String) -> Bool {
+        NSImage(systemSymbolName: name, accessibilityDescription: nil) != nil
     }
 }

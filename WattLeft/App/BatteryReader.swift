@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import IOKit
 import IOKit.ps
@@ -21,9 +22,13 @@ final class BatteryReader {
     }
 
     func readEnergyImpactApps() -> [EnergyImpactApp] {
+        readImpactApps(sortKey: "power", statKey: "power")
+    }
+
+    private func readImpactApps(sortKey: String, statKey: String) -> [EnergyImpactApp] {
         let task = Process()
         task.executableURL = URL(fileURLWithPath: "/usr/bin/top")
-        task.arguments = ["-l", "1", "-o", "power", "-stats", "pid,command,power"]
+        task.arguments = ["-l", "2", "-o", sortKey, "-stats", "pid,command,\(statKey)"]
         let outputPipe = Pipe()
         let errorPipe = Pipe()
         task.standardOutput = outputPipe
@@ -39,7 +44,24 @@ final class BatteryReader {
 
         let data = outputPipe.fileHandleForReading.readDataToEndOfFile()
         guard let output = String(data: data, encoding: .utf8) else { return [] }
-        return BatteryReader.energyImpactApps(fromTopOutput: output)
+        let apps = BatteryReader.energyImpactApps(fromTopOutput: output)
+        let mapped: [EnergyImpactApp] = apps.compactMap { app -> EnergyImpactApp? in
+            guard let runningApp = NSRunningApplication(processIdentifier: pid_t(app.pid)) else {
+                return nil
+            }
+            guard runningApp.activationPolicy == .regular else {
+                return nil
+            }
+            guard runningApp.bundleIdentifier != nil,
+                  runningApp.bundleURL != nil else {
+                return nil
+            }
+            if let localizedName = runningApp.localizedName, localizedName.isEmpty == false {
+                return EnergyImpactApp(pid: app.pid, name: localizedName, impact: app.impact)
+            }
+            return app
+        }
+        return mapped.filter { $0.impact > 0 }
     }
 
     static func batteryInfo(from description: [String: Any]) -> BatteryInfo? {
@@ -113,6 +135,7 @@ final class BatteryReader {
 
         let powerMode = BatteryReader.readPowerMode()
         let powerConsumptionWatts = BatteryReader.powerConsumptionWatts(fromRegistry: registry)
+        let optimizedChargingState = BatteryReader.readOptimizedChargingState()
 
         return BatteryInfo(
             percentage: percentage,
@@ -124,7 +147,8 @@ final class BatteryReader {
             powerMode: powerMode,
             isCharging: isCharging,
             isOnACPower: isOnACPower,
-            powerConsumptionWatts: powerConsumptionWatts
+            powerConsumptionWatts: powerConsumptionWatts,
+            optimizedChargingState: optimizedChargingState
         )
     }
 
@@ -196,9 +220,44 @@ final class BatteryReader {
         return watts > 0 ? watts : nil
     }
 
+    static func readOptimizedChargingState() -> OptimizedChargingState {
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/pmset")
+        task.arguments = ["-g", "batt"]
+        let outputPipe = Pipe()
+        let errorPipe = Pipe()
+        task.standardOutput = outputPipe
+        task.standardError = errorPipe
+
+        do {
+            try task.run()
+        } catch {
+            return .unknown
+        }
+        task.waitUntilExit()
+        guard task.terminationStatus == 0 else { return .unknown }
+
+        let data = outputPipe.fileHandleForReading.readDataToEndOfFile()
+        guard let output = String(data: data, encoding: .utf8) else { return .unknown }
+        return optimizedChargingState(fromPMSetBattOutput: output)
+    }
+
+    static func optimizedChargingState(fromPMSetBattOutput output: String) -> OptimizedChargingState {
+        let lowercased = output.lowercased()
+        if lowercased.contains("charging on hold") {
+            return .engaged
+        }
+        if lowercased.contains("discharging")
+            || lowercased.contains("charging")
+            || lowercased.contains("charged") {
+            return .notEngaged
+        }
+        return .unknown
+    }
+
     static func energyImpactApps(fromTopOutput output: String) -> [EnergyImpactApp] {
         let lines = output.split(separator: "\n", omittingEmptySubsequences: true)
-        guard let headerIndex = lines.firstIndex(where: { $0.contains("PID") && $0.contains("COMMAND") && $0.contains("POWER") }) else {
+        guard let headerIndex = lines.lastIndex(where: { $0.contains("PID") && $0.contains("COMMAND") && $0.contains("POWER") }) else {
             return []
         }
 
@@ -217,7 +276,8 @@ final class BatteryReader {
             let nameParts = parts.dropFirst().dropLast()
             let name = nameParts.joined(separator: " ")
             guard name.isEmpty == false else { continue }
-            guard impact > 0 else { continue }
+            if name == "idle_task" { continue }
+            guard impact >= 0 else { continue }
 
             apps.append(EnergyImpactApp(pid: pid, name: name, impact: impact))
         }

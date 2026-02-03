@@ -5,17 +5,35 @@ import SwiftUI
 struct MenuBarView: View {
     @ObservedObject var model: BatteryModel
     @Binding var displayMode: MenuBarDisplayMode
+    private let menuWidth: CGFloat = 320
+    private let menuHeight: CGFloat = 520
 
     var body: some View {
+        scrollableContent(combinedContent)
+            .font(.system(size: 12))
+            .controlSize(.small)
+            .frame(width: menuWidth, height: menuHeight)
+    }
+
+    private func scrollableContent<Content: View>(_ content: Content) -> some View {
+        ScrollView {
+            content
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+        }
+    }
+
+    private var combinedContent: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("WattLeft")
-                .font(.headline)
+                .font(.system(size: 14, weight: .semibold))
 
             Grid(horizontalSpacing: 12, verticalSpacing: 6) {
                 tableRow("Charge", value: "\(model.info.percentage)%")
                 tableRow(model.info.isOnACPower ? "Time to full" : "Time remaining",
                          value: BatteryFormatter.timeString(fromMinutes: model.info.timeRemainingMinutes))
                 tableRow("Status", value: statusText)
+                tableRow("Optimized Charging", value: model.info.optimizedChargingState.rawValue)
                 if !model.info.isOnACPower {
                     tableRow("On battery for",
                              value: BatteryFormatter.timeString(fromMinutes: model.info.timeOnBatteryMinutes))
@@ -28,10 +46,9 @@ struct MenuBarView: View {
             }
 
             if !model.powerHistory.isEmpty {
+                sectionHeader("Power Consumption", subtitle: "Since unplugged")
+
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Power Consumption (since unplugged)")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
 
                     Chart(model.powerHistory) { sample in
                         AreaMark(
@@ -63,20 +80,60 @@ struct MenuBarView: View {
                 }
             }
 
-            if !significantEnergyApps.isEmpty {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Significant Energy")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+            if model.energyImpactMetric == .power, !significantEnergyApps.isEmpty {
+                sectionHeader("Significant Energy")
 
+                VStack(alignment: .leading, spacing: 6) {
                     ForEach(significantEnergyApps) { app in
-                        HStack {
-                            Text(app.name)
-                                .lineLimit(1)
-                            Spacer()
-                            Text(BatteryFormatter.impactString(fromValue: app.impact))
-                                .monospacedDigit()
+                        appRow(title: app.name, value: BatteryFormatter.impactString(fromValue: app.impact), pid: app.pid)
+                    }
+                }
+            }
+
+            if !model.info.isOnACPower || !model.energyImpactApps.isEmpty {
+                Divider()
+
+                sectionHeader("Apps")
+
+                VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack(spacing: 6) {
+                            Text(model.energyImpactMetric.liveTitle)
+                            Text("W")
+                                .font(.system(size: 11))
                                 .foregroundStyle(.secondary)
+                        }
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(.secondary)
+
+                        if model.energyImpactApps.isEmpty {
+                            Text("No active energy impact data.")
+                                .foregroundStyle(.secondary)
+                        } else {
+                            ForEach(liveEnergyApps) { app in
+                                appRow(title: app.name, value: liveImpactValue(for: app.impact), pid: app.pid)
+                            }
+                        }
+                    }
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Since Unplugged")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(.secondary)
+
+                        if model.info.isOnACPower {
+                            Text("Totals reset while plugged in.")
+                                .foregroundStyle(.secondary)
+                        } else if model.energyImpactTotals.isEmpty {
+                            Text("Collecting impact since unplugged…")
+                                .foregroundStyle(.secondary)
+                        } else {
+                            ForEach(cumulativeEnergyApps) { app in
+                                appRow(
+                                    title: app.name,
+                                    value: "\(BatteryFormatter.impactString(fromValue: app.totalImpact)) impact-min"
+                                )
+                            }
                         }
                     }
                 }
@@ -84,7 +141,7 @@ struct MenuBarView: View {
 
             Divider()
 
-            Button("Power Mode Settings…") {
+            Button("Battery Settings…") {
                 if let url = URL(string: "x-apple.systempreferences:com.apple.preference.battery") {
                     NSWorkspace.shared.open(url)
                 }
@@ -110,10 +167,6 @@ struct MenuBarView: View {
                 NSApp.terminate(nil)
             }
         }
-        .font(.system(size: 13))
-        .padding(12)
-        .frame(width: 300)
-        .fixedSize(horizontal: true, vertical: false)
     }
 
     private var statusText: String {
@@ -131,13 +184,74 @@ struct MenuBarView: View {
         GridRow {
             Text(title)
                 .foregroundStyle(.secondary)
+                .font(.system(size: 12))
                 .lineLimit(1)
                 .frame(width: 150, alignment: .leading)
             Text(value)
                 .monospacedDigit()
+                .font(.system(size: 12, weight: .medium))
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .trailing)
         }
+    }
+
+    private func appRow(title: String, value: String, pid: Int? = nil) -> some View {
+        HStack {
+            Image(nsImage: appIcon(for: pid, name: title))
+                .resizable()
+                .frame(width: 16, height: 16)
+                .cornerRadius(3)
+                .help(title)
+            Text(title)
+                .font(.system(size: 12))
+                .lineLimit(1)
+            Spacer()
+            Text(value)
+                .monospacedDigit()
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private func liveImpactValue(for value: Double) -> String {
+        "\(BatteryFormatter.impactString(fromValue: value))W"
+    }
+
+    private func appIcon(for pid: Int?, name: String) -> NSImage {
+        if let pid,
+           let icon = NSRunningApplication(processIdentifier: pid_t(pid))?.icon {
+            return icon
+        }
+
+        if let icon = NSWorkspace.shared.runningApplications.first(where: {
+            $0.localizedName?.caseInsensitiveCompare(name) == .orderedSame
+        })?.icon {
+            return icon
+        }
+
+        return NSImage(named: NSImage.applicationIconName) ?? NSImage()
+    }
+
+    @ViewBuilder
+    private func sectionHeader(_ title: String, subtitle: String? = nil) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 6) {
+            Text(title)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.primary)
+            if let subtitle {
+                Text(subtitle)
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var liveEnergyApps: [EnergyImpactApp] {
+        Array(model.energyImpactApps.prefix(5))
+    }
+
+    private var cumulativeEnergyApps: [EnergyImpactAppSummary] {
+        Array(model.energyImpactTotals.prefix(5))
     }
 
     private var significantEnergyApps: [EnergyImpactApp] {

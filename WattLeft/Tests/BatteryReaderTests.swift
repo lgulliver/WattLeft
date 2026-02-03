@@ -82,6 +82,22 @@ final class BatteryReaderTests: XCTestCase {
         XCTAssertEqual(BatteryReader.powerMode(fromPMSetOutput: outputLow), "Low Power")
     }
 
+    func testOptimizedChargingEngagedParsing() {
+        let output = """
+        Now drawing from 'AC Power'
+         -InternalBattery-0 (id=1234567)\t80%; charging on hold; (no estimate) present: true
+        """
+        XCTAssertEqual(BatteryReader.optimizedChargingState(fromPMSetBattOutput: output), .engaged)
+    }
+
+    func testOptimizedChargingNotEngagedParsing() {
+        let output = """
+        Now drawing from 'AC Power'
+         -InternalBattery-0 (id=1234567)\t80%; charging; 1:20 remaining present: true
+        """
+        XCTAssertEqual(BatteryReader.optimizedChargingState(fromPMSetBattOutput: output), .notEngaged)
+    }
+
     func testEnergyImpactParsing() {
         let output = """
         Processes: 520 total, 2 running, 518 sleeping, 3052 threads
